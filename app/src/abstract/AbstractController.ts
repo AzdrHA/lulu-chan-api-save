@@ -1,35 +1,59 @@
-import { Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Delete, Get, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import { ICrudService } from '../interface/ICrudService';
+import ApiException from '../exception/ApiException';
+import { Response } from 'express';
 
-export default abstract class AbstractController<T> implements ICrudService<T> {
-  protected constructor(private readonly service: ICrudService<T>) {}
+export default abstract class AbstractController<T> {
+  protected constructor(private readonly service: ICrudService<T>) {
+  }
 
   @Post()
-  public create(data: T): string {
-    return this.handlerRequest(this.service, 'create', data)
+  public create(@Res() response: Response, @Body() data: T): Promise<unknown> {
+    return this.handlerRequest(response, {
+      service: this.service,
+      fn: 'create',
+      args: [data],
+    });
   }
-
-  @Get('/:id')
-  public read(@Param('id') id: number): string {
-    return this.handlerRequest(this.service, 'read', id)
-  }
-
-  @Patch('/:id')
-  public update(@Param('id') id: number, data: T): string {
-    return this.handlerRequest(this.service, 'update', { id, data })
-  }
+  //
+  // @Get('/:id')
+  // public read(@Res() response: Response, @Param('id') id: number): Promise<unknown> {
+  //   return this.handlerRequest(response, {
+  //     service: this.service,
+  //     fn: 'read',
+  //     args: [id],
+  //   });
+  // }
+  //
+  // @Patch('/:id')
+  // public update(@Res() response: Response, @Param('id') id: number, data: T): Promise<unknown> {
+  //   return this.handlerRequest(response, {
+  //     service: this.service,
+  //     fn: 'update',
+  //     args: [id, data],
+  //   });
+  // }
 
   @Delete('/:id')
-  public delete(@Param('id') id: number): string {
-    return this.handlerRequest(this.service, 'delete', id)
+  public delete(@Res() response: Response, @Param('id') id: number): Promise<unknown> {
+    return this.handlerRequest(response, {
+      service: this.service,
+      fn: 'delete',
+      args: [id],
+    });
   }
 
-  public handlerRequest(service, fn, parameters): string {
-    console.log('handlerRequest');
-    console.log(service);
-    console.log(fn);
-    console.log(parameters);
-    return service[fn](parameters);
-    return 'handlerRequest';
+
+  public async handlerRequest(response: Response, args: {
+    service: ICrudService<T>;
+    fn: string,
+    args?: unknown[]
+  }): Promise<unknown> {
+    const service = args['service'];
+    const fn = args['fn'] ?? null;
+    const fnArgs = args['args'] ?? [];
+
+    if (!service && !fn) throw new ApiException('Aucun service demandé');
+    return response.json(await service[fn](...fnArgs));
   }
 }

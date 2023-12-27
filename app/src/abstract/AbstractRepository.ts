@@ -1,19 +1,9 @@
 import { ICrudRepository } from '../interface/ICrudRepository';
+import { Repository, DataSource } from 'typeorm';
+import { Command } from '../model/command.model';
 
-export default abstract class AbstractRepository<T> implements ICrudRepository<T> {
-  create(data: T): string {
-    return '';
-  }
-
-  delete(id: number): string {
-    return '';
-  }
-
-  read(id: number): string {
-    return '';
-  }
-
-  update(id: number, data: T): string {
-    return '';
+export default abstract class AbstractRepository<T> extends Repository<T> {
+  protected constructor(private entity: T, private dataSourse: DataSource) {
+    super(Command, dataSourse.createEntityManager());
   }
 }

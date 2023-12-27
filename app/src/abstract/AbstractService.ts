@@ -1,24 +1,30 @@
-import { Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Repository } from 'typeorm/repository/Repository';
 import { ICrudService } from '../interface/ICrudService';
+import { DeleteResult } from 'typeorm';
+import { IIdentifiableModel } from '../interface/model/IIdentifiableModel';
 import { Command } from '../model/command.model';
-import { ICrudRepository } from '../interface/ICrudRepository';
 
-export default abstract class AbstractService<T> implements ICrudService<T> {
-  constructor(private repository: ICrudRepository<T>) {
-  }
-  public create(data: T): string {
-    return this.repository.create(data);
+export default abstract class AbstractService<T extends IIdentifiableModel> implements ICrudService<T> {
+  protected constructor(public repository: Repository<T>) {
   }
 
-  public delete(id: number): string {
-    this.repository.delete(id);
+  public create(data: T): Promise<T> {
+    return this.repository.save(data);
   }
 
-  public read(id: number): string {
-    return 'read';
+  public delete(id: number): Promise<DeleteResult> {
+    return this.repository.delete(id);
   }
 
-  public update(id: number, data: T): string {
-    return 'update';
+  public read(id: number): Promise<T> {
+    return this.repository.findOne({ where: { id: id } });
   }
+
+  // public read(id: number): Promise<T> {
+  //   return this.repository.findOne({ where: { id: id } });
+  // }
+  //
+  // public update(id: number, data: T): Promise<unknown> {
+  //   return this.repository.update(id, data);
+  // }
 }

@@ -1,3 +1,6 @@
-import { ICrudService } from './ICrudService';
-
-export interface ICrudRepository<T> extends ICrudService<T> {}
+export interface ICrudRepository<T> {
+  create(data: T): string;
+  delete(id: number): Promise<unknown>;
+  read(id: number): Promise<unknown>;
+  update(id: number, data: T): Promise<unknown>;
+}

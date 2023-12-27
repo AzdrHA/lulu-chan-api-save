@@ -1,7 +1,7 @@
 services:
   app:
     build:
-      context: ./docker/bun
+      context: ./docker/node
     ports:
       - "${APP_PORT}:${APP_PORT}"
     depends_on:
@@ -9,7 +9,7 @@ services:
     volumes:
       - ./app:/srv/app:rw,cached
       - ./public:/srv/app/public:rw,cached
-    command: [ "bun", "--watch", "run", "src/main.ts" ]
+    command: [ "npm", "run", "start:dev" ]
     env_file:
       - .env
 
