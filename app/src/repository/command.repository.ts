@@ -1,6 +1,12 @@
 import { Command } from '../model/command.model';
-import { Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm/repository/Repository';
+import TypeormConfig from '../config/typeorm.config';
 
-@Injectable()
-export default class CommandRepository extends Repository<Command> {}
+export const commandRepository = TypeormConfig.getRepository(Command).extend({
+  findCommandByName: async (name: string) => {
+    return await TypeormConfig.getRepository(Command).findOne({ where: { name: name } });
+  },
+  findCommandById: async (id: number) => {
+    return await TypeormConfig.getRepository(Command).findOneOrFail({ where: { id: id } });
+  }
+});
+

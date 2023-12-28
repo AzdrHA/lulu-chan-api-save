@@ -9,7 +9,7 @@ services:
     volumes:
       - ./app:/srv/app:rw,cached
       - ./public:/srv/app/public:rw,cached
-    command: [ "npm", "run", "start:dev" ]
+    command: [ "npm", "run", "dev" ]
     env_file:
       - .env
 

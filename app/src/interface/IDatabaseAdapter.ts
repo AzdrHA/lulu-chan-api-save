@@ -1,5 +1,6 @@
-import { DynamicModule } from '@nestjs/common';
+import { DataSource } from 'typeorm';
 
 export interface IDatabaseAdapter {
-  connect(): DynamicModule;
+  connect(): { provide: string; useFactory: () => Promise<DataSource> };
 }
+

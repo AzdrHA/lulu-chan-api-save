@@ -1,59 +1,40 @@
-import { Body, Delete, Get, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import { ICrudService } from '../interface/ICrudService';
 import ApiException from '../exception/ApiException';
 import { Response } from 'express';
+import { IIdentifiableModel } from '../interface/model/IIdentifiableModel';
+import { EntityNotFoundError } from 'typeorm';
 
-export default abstract class AbstractController<T> {
-  protected constructor(private readonly service: ICrudService<T>) {
-  }
-
-  @Post()
-  public create(@Res() response: Response, @Body() data: T): Promise<unknown> {
-    return this.handlerRequest(response, {
-      service: this.service,
-      fn: 'create',
-      args: [data],
-    });
-  }
-  //
-  // @Get('/:id')
-  // public read(@Res() response: Response, @Param('id') id: number): Promise<unknown> {
-  //   return this.handlerRequest(response, {
-  //     service: this.service,
-  //     fn: 'read',
-  //     args: [id],
-  //   });
-  // }
-  //
-  // @Patch('/:id')
-  // public update(@Res() response: Response, @Param('id') id: number, data: T): Promise<unknown> {
-  //   return this.handlerRequest(response, {
-  //     service: this.service,
-  //     fn: 'update',
-  //     args: [id, data],
-  //   });
-  // }
-
-  @Delete('/:id')
-  public delete(@Res() response: Response, @Param('id') id: number): Promise<unknown> {
-    return this.handlerRequest(response, {
-      service: this.service,
-      fn: 'delete',
-      args: [id],
-    });
-  }
-
-
+export default abstract class AbstractController<T extends IIdentifiableModel> {
   public async handlerRequest(response: Response, args: {
     service: ICrudService<T>;
     fn: string,
     args?: unknown[]
-  }): Promise<unknown> {
+  }): Promise<any> {
     const service = args['service'];
     const fn = args['fn'] ?? null;
     const fnArgs = args['args'] ?? [];
 
     if (!service && !fn) throw new ApiException('Aucun service demandé');
-    return response.json(await service[fn](...fnArgs));
+    try {
+      const result = await service[fn](...fnArgs);
+      return response.status(200).json(result);
+    } catch (e) {
+      if (e instanceof ApiException) return response.status(e.status).json({
+        message: e.message,
+        status: e.status,
+      });
+      if (e instanceof EntityNotFoundError) {
+        return response.status(404).json({
+          message: 'entity not found',
+          status: 404,
+        });
+      }
+      console.log(e);
+      return response.status(500).json({
+        message: 'Une erreur est survenue',
+        status: 500,
+        error: e.message,
+      });
+    }
   }
 }
