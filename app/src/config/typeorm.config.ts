@@ -1,15 +1,16 @@
 import { DataSource } from 'typeorm';
 import { APP_DIR, PROJECT_DIR } from './Constant';
+import { ConfigService } from '@nestjs/config';
 
+const configService = new ConfigService();
 export default new DataSource({
   migrationsTableName: 'migrations',
   type: 'mysql',
-  host: process.env.DB_HOST,
-  port: 3306,
-  username: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_NAME,
-  // entities: [Command, CommandCategory],
+  host: configService.get('DB_HOST'),
+  port: configService.get('DB_PORT'),
+  username: configService.get('DB_USER'),
+  password: configService.get('DB_PASSWORD'),
+  database: configService.get('DB_NAME'),
   migrations: [
     PROJECT_DIR + '/migrations/*.ts',
   ],
