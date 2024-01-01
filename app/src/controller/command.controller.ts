@@ -2,10 +2,10 @@ import { Body, Controller, Delete, Get, Param, Patch, Post, Res } from '@nestjs/
 import CommandService from '../services/command.service';
 import AbstractController from '../abstract/AbstractController';
 import { Response } from 'express';
-import { Command } from '../model/command.model';
+import { Command } from '../model/command/command.model';
 
 @Controller('/command')
-export class CommandController extends AbstractController<Command> {
+export class CommandController extends AbstractController {
   constructor(private commandService: CommandService) {
     super();
   }
@@ -43,6 +43,15 @@ export class CommandController extends AbstractController<Command> {
       service: this.commandService,
       fn: 'delete',
       args: [id],
+    });
+  }
+
+  @Get('/:name/image')
+  public async getByName(@Res() response: Response, @Param('name') name: string): Promise<Command> {
+    return this.handlerRequest(response, {
+      service: this.commandService,
+      fn: 'getImageByCommandName',
+      args: [name],
     });
   }
 }

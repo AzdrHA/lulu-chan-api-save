@@ -5,7 +5,7 @@ import CommandCategoryService from '../services/command.category.service';
 import { CommandCategory } from '../model/commandCategory.model';
 
 @Controller('/command_category')
-export class CommandCategoryController extends AbstractController<CommandCategory> {
+export class CommandCategoryController extends AbstractController {
   constructor(private commandCategoryService: CommandCategoryService) {
     super();
   }

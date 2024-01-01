@@ -1,11 +1,11 @@
-import { Command } from '../model/command.model';
+import { Command } from '../model/command/command.model';
 import { Injectable } from '@nestjs/common';
 import { ICrudService } from '../interface/ICrudService';
 import ApiException from '../exception/ApiException';
 import { commandCategoryRepository } from '../repository/command.category.repository';
 
 @Injectable()
-export default class CommandCategoryService implements ICrudService<Command> {
+export default class CommandCategoryService implements ICrudService {
   public async create(data: Command): Promise<Command> {
     return commandCategoryRepository.save(data);
   }
@@ -26,14 +26,16 @@ export default class CommandCategoryService implements ICrudService<Command> {
     return commandCategoryRepository.getAllCategories();
   }
 
-  public async createOrUpdate(id: number, data: Command): Promise<Command> {
+  public async createOrUpdate(id: number, data: Command): Promise<unknown> {
     const existingCommand = await commandCategoryRepository.findCategoryByName(data.name);
     if (existingCommand) throw new ApiException('Category already exists');
 
-    if (id) {
-      return this.update(id, data);
-    } else {
-      return this.create(data);
-    }
+    return 'ok'
+
+    // if (id) {
+    //   return this.update(id, data);
+    // } else {
+    //   return this.create(data);
+    // }
   }
 }

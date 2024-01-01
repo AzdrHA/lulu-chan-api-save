@@ -4,9 +4,9 @@ import { Response } from 'express';
 import { IIdentifiableModel } from '../interface/model/IIdentifiableModel';
 import { EntityNotFoundError } from 'typeorm';
 
-export default abstract class AbstractController<T extends IIdentifiableModel> {
+export default abstract class AbstractController {
   public async handlerRequest(response: Response, args: {
-    service: ICrudService<T>;
+    service: ICrudService;
     fn: string,
     args?: unknown[]
   }): Promise<any> {
@@ -29,7 +29,6 @@ export default abstract class AbstractController<T extends IIdentifiableModel> {
           status: 404,
         });
       }
-      console.log(e);
       return response.status(500).json({
         message: 'Une erreur est survenue',
         status: 500,

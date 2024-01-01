@@ -6,8 +6,8 @@ import { CommandCategoryModule } from './command.category.module';
 @Module({
   imports: [
     DatabaseModule,
-    CommandModule,
-    CommandCategoryModule
+    CommandCategoryModule,
+    // CommandModule,
   ],
 })
 export class AppModule {}

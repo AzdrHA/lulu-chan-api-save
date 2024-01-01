@@ -1,4 +1,4 @@
-import { Command } from '../model/command.model';
+import { Command } from '../model/command/command.model';
 import TypeormConfig from '../config/typeorm.config';
 
 export const commandRepository = TypeormConfig.getRepository(Command).extend({
@@ -7,6 +7,6 @@ export const commandRepository = TypeormConfig.getRepository(Command).extend({
   },
   findCommandById: async (id: number) => {
     return await TypeormConfig.getRepository(Command).findOneOrFail({ where: { id: id } });
-  }
+  },
 });
 
