@@ -1,7 +1,8 @@
-import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { IIdentifiableModel } from '../interface/model/IIdentifiableModel';
 import { ITimestampableEntity } from '../interface/model/ITimestampableModel';
 import { IsBoolean, IsString } from 'class-validator';
+import { Command } from './command.model';
 
 @Entity('command_category')
 export class CommandCategory implements IIdentifiableModel, ITimestampableEntity {
@@ -12,13 +13,16 @@ export class CommandCategory implements IIdentifiableModel, ITimestampableEntity
   @IsString({ message: 'Name must be a string', groups: ['create', 'update'] })
   public name: string;
 
-  @Column()
-  @IsBoolean()
-  public nsfw: boolean;
+  @Column({default: false})
+  @IsBoolean({message: 'NSFW must be a boolean', groups: ['create', 'update']})
+  public nsfw: boolean = false;
 
   @CreateDateColumn()
   public createdAt: Date;
 
   @UpdateDateColumn()
   public updatedAt: Date;
+
+  @OneToMany(() => Command, command => command.category)
+  public commands: Command[];
 }

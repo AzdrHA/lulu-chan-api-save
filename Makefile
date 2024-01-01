@@ -15,3 +15,6 @@ restart: stop start
 
 enter:
 	@docker compose exec app sh
+
+migration:
+	@docker compose exec app npm run migration:generate && npm run migration:run

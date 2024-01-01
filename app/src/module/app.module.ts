@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { DatabaseManager } from '../manager/DatabaseManager';
-import { MysqlAdapter } from '../adapter/database/MysqlAdapter';
 import { CommandModule } from './command.module';
 import { DatabaseModule } from './database.module';
+import { CommandCategoryModule } from './command.category.module';
 
 @Module({
   imports: [
     DatabaseModule,
-    CommandModule
+    CommandModule,
+    CommandCategoryModule
   ],
 })
 export class AppModule {}

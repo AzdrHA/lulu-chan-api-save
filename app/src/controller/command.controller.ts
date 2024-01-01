@@ -1,4 +1,4 @@
-import { ArgumentMetadata, Body, Controller, Delete, Get, Param, Patch, Post, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Res } from '@nestjs/common';
 import CommandService from '../services/command.service';
 import AbstractController from '../abstract/AbstractController';
 import { Response } from 'express';
@@ -14,8 +14,8 @@ export class CommandController extends AbstractController<Command> {
   public async create(@Res() response: Response, @Body() data: Command): Promise<Command> {
     return this.handlerRequest(response, {
       service: this.commandService,
-      fn: 'create',
-      args: [data],
+      fn: 'createOrUpdate',
+      args: [null, data],
     });
   }
 
@@ -32,7 +32,7 @@ export class CommandController extends AbstractController<Command> {
   public update(@Res() response: Response, @Param('id') id: number, @Body() data: Command): Promise<Command> {
     return this.handlerRequest(response, {
       service: this.commandService,
-      fn: 'update',
+      fn: 'createOrUpdate',
       args: [id, data],
     });
   }
