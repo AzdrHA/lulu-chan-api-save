@@ -45,4 +45,13 @@ export class CommandCategoryController extends AbstractController<CommandCategor
       args: [id],
     });
   }
+
+  @Get()
+  public async getAll(@Res() response: Response): Promise<CommandCategory[]> {
+    return this.handlerRequest(response, {
+      service: this.commandCategoryService,
+      fn: 'getAll',
+      args: [],
+    });
+  }
 }

@@ -22,6 +22,10 @@ export default class CommandCategoryService implements ICrudService<Command> {
     return commandCategoryRepository.update(id, data);
   }
 
+  public getAll(): Promise<unknown> {
+    return commandCategoryRepository.getAllCategories();
+  }
+
   public async createOrUpdate(id: number, data: Command): Promise<Command> {
     const existingCommand = await commandCategoryRepository.findCategoryByName(data.name);
     if (existingCommand) throw new ApiException('Category already exists');
